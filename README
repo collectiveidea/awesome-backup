@@ -1,0 +1,40 @@
+= Awesome Backups
+
+This Rails plugin provides Rake and Capistrano tasks for making database backups.
+
+== Rake
+
+You can create new backups, specifying which tables to skip. This will create a
++backups+ directory in your app root, and will create a directory with the
+current timestamp that has a copy of the current schema and fixtures with data
+for each of your current tables.
+
+  $ rake db:backup:create SKIP_TABLES=sessions,audits
+
+You can restore your database to either the latest version, or a specific version.
+
+  $ rake db:backup:restore VERSION=20080908120356
+
+== Capistrano
+
+With Capistrano, you can create and download backups from your server using
+capistrano:
+
+  $ cap backup:create
+  $ cap backup:download
+
+Or, if you want to create a new backup of the server and mirror it to the local
+database:
+
+  $ cap backup:mirror
+
+You can automagically create backups any time `cap deploy:migrations` is run.
+Just add a callback in config/deploy.rb:
+
+  before 'deploy:migrate', 'backup:create'
+
+== ToDo
+
+* Database-specific backup strategies: it would be nice to have the option of
+  using different stragegies for different databases.  For example, use
+  `mysqldump` for MySQL databases, or simply copy the database file for SQLite.
